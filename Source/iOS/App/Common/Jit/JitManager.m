@@ -13,6 +13,7 @@ typedef NS_ENUM(NSInteger, DOLJitType) {
 @interface JitManager ()
 
 @property (readwrite, assign) bool acquiredJit;
+@property (readwrite, assign) bool deviceHasTxm;
 
 @end
 
@@ -40,6 +41,13 @@ typedef NS_ENUM(NSInteger, DOLJitType) {
 #endif
     
     self.acquiredJit = false;
+    
+    if (@available(iOS 26, *)) {
+      self.deviceHasTxm = [self checkIfDeviceUsesTXM];
+    } else {
+      // This is technically untrue on some devices, but it only matters on iOS 26 or above.
+      self.deviceHasTxm = false;
+    }
   }
   
   return self;
@@ -47,7 +55,25 @@ typedef NS_ENUM(NSInteger, DOLJitType) {
 
 - (void)recheckIfJitIsAcquired {
   if (_jitType == DOLJitTypeDebugger) {
+    if (self.deviceHasTxm) {
+      NSDictionary* environment = [[NSProcessInfo processInfo] environment];
+      
+      if ([environment objectForKey:@"XCODE"] != nil) {
+        static dispatch_once_t onceToken;
+
+        dispatch_once(&onceToken, ^{
+          self.acquisitionError = @"JIT cannot be enabled while running within Xcode on iOS 26.";
+        });
+        
+        return;
+      }
+    }
+    
     self.acquiredJit = [self checkIfProcessIsDebugged];
+    
+    if (self.deviceHasTxm && self.acquiredJit) {
+      self.acquisitionError = @"A debugger is attached. However, if the debugger is not StikDebug, DolphiniOS will crash when emulation starts.";
+    }
   } else if (_jitType == DOLJitTypeUnrestricted) {
     self.acquiredJit = true;
   }

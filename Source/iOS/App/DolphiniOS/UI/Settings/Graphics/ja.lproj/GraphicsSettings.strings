@@ -62,7 +62,7 @@
 "GOv-Af-lVT.text" = "強制24bitカラー化";
 
 /* Class = "UILabel"; text = "Enable API Validation Layers"; ObjectID = "Gox-HX-QPR"; */
-"Gox-HX-QPR.text" = "Enable API Validation Layers";
+"Gox-HX-QPR.text" = "API検証レイヤーの有効化";
 
 /* Class = "UILabel"; text = "Load Custom Textures"; ObjectID = "HjZ-jk-3AV"; */
 "HjZ-jk-3AV.text" = "カスタムテクスチャを読み込む";
@@ -256,7 +256,7 @@
 /* Class = "UILabel"; text = "Force Linear and 8x Anisotropic"; ObjectID = "2G3-K2-Hl0"; */
 "2G3-K2-Hl0.text" = "リニアを強制、8x 異方性フィルタリング";
 
-/* Class = "UILabel"; text = "Force Linear"; ObjectID = "FlS-dn-3Ph"; */
+/* Class = "UILabel"; text = "Force Linear and 1x Anisotropic"; ObjectID = "FlS-dn-3Ph"; */
 "FlS-dn-3Ph.text" = "リニアを強制";
 
 /* Class = "UILabel"; text = "Force Linear and 16x Anisotropic"; ObjectID = "a2q-0S-sXo"; */
@@ -303,3 +303,6 @@
 
 /* Class = "UILabel"; text = "Cull Vertices on the CPU"; ObjectID = "edj-Ox-q0H"; */
 "edj-Ox-q0H.text" = "CPUで頂点をカリングする";
+
+/* Class = "UILabel"; text = "1x Anisotropic"; ObjectID = "mRh-h9-BHZ"; */
+"mRh-h9-BHZ.text" = "1x Anisotropic";

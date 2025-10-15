@@ -32,6 +32,8 @@ protected:
   size_t region_size = 0;
   // Original size of the region we allocated.
   size_t total_region_size = 0;
+  // How far away from the writable region is from the executable region. Only used on iOS.
+  ptrdiff_t writable_region_diff = 0;
 
   bool m_is_child = false;
   std::vector<CodeBlock*> m_children;
@@ -58,6 +60,12 @@ public:
     else
       region = static_cast<u8*>(Common::AllocateMemoryPages(total_region_size));
     T::SetCodePtr(region, region + size);
+  
+#ifdef IPHONEOS
+    writable_region_diff = Common::GetWritableRegionDiff();
+#endif
+
+    T::SetWritableRegionDiff(writable_region_diff);
   }
 
   // Always clear code space with breakpoints, so that if someone accidentally executes
@@ -72,7 +80,11 @@ public:
   void FreeCodeSpace()
   {
     ASSERT(!m_is_child);
+#ifdef IPHONEOS
+    Common::FreeExecutableMemory(region);
+#else
     Common::FreeMemoryPages(region, total_region_size);
+#endif
     region = nullptr;
     region_size = 0;
     total_region_size = 0;
@@ -81,6 +93,7 @@ public:
       child->region = nullptr;
       child->region_size = 0;
       child->total_region_size = 0;
+      child->writable_region_diff = 0;
     }
   }
 
@@ -89,7 +102,6 @@ public:
   {
     return ptr >= region && ptr < (region + total_region_size);
   }
-  u8* GetRegionPtr() { return region; }
   void WriteProtect(bool allow_execute)
   {
     Common::WriteProtectMemory(region, region_size, allow_execute);
@@ -127,6 +139,7 @@ public:
     child->region = child_region;
     child->region_size = child_size;
     child->total_region_size = child_size;
+    child->writable_region_diff = writable_region_diff;
     child->ResetCodePtr();
     m_children.emplace_back(child);
   }

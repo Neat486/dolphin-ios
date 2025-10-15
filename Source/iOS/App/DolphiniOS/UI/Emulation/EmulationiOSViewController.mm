@@ -16,7 +16,6 @@
 
 #import "InputCommon/InputConfig.h"
 
-#import "VideoCommon/RenderBase.h"
 #import "VideoCommon/Present.h"
 
 #import "EmulationCoordinator.h"
@@ -69,6 +68,12 @@ typedef NS_ENUM(NSInteger, DOLEmulationVisibleTouchPad) {
   }
   
   _stateSlot = Config::GetBase(Config::MAIN_SELECTED_STATE_SLOT);
+  
+  // On iPadOS 26, the pull down button in the upper left can be blocked by window controls.
+  if (UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+    self.pullDownLeftConstraint.active = false;
+    self.pullDownCenterConstraint.active = true;
+  }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -366,7 +371,7 @@ typedef NS_ENUM(NSInteger, DOLEmulationVisibleTouchPad) {
     irMode = (TCWiiTouchIRMode)Config::Get(Config::MAIN_TOUCH_PAD_IR_MODE);
     
     ControllerEmu::ControlGroup* group = Wiimote::GetWiimoteGroup(0, WiimoteEmu::WiimoteGroup::IMUPoint);
-    group->enabled = irMode == TCWiiTouchIRModeNone;
+    group->enabled.SetValue(irMode == TCWiiTouchIRModeNone);
   }
   
   for (int i = 0; i < [self.touchPads count]; i++) {

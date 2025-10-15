@@ -171,7 +171,7 @@ void JitArm64::ClearCache()
 
   blocks.Clear();
   blocks.ClearRangesToFree();
-  const Common::ScopedJITPageWriteAndNoExecute enable_jit_page_writes(GetRegionPtr());
+  const Common::ScopedJITPageWriteAndNoExecute enable_jit_page_writes;
   m_far_code_0.ClearCodeSpace();
   m_near_code_0.ClearCodeSpace();
   m_near_code_1.ClearCodeSpace();
@@ -950,7 +950,7 @@ void JitArm64::Jit(u32 em_address, bool clear_cache_and_retry_on_failure)
     ClearCache();
   FreeRanges();
 
-  const Common::ScopedJITPageWriteAndNoExecute enable_jit_page_writes(GetRegionPtr());
+  const Common::ScopedJITPageWriteAndNoExecute enable_jit_page_writes;
 
   std::size_t block_size = m_code_buffer.size();
 
@@ -1208,7 +1208,7 @@ bool JitArm64::DoJit(u32 em_address, JitBlock* b, u32 nextPC)
         gpr.Lock(ARM64Reg::W30);
         BitSet32 regs_in_use = gpr.GetCallerSavedUsed();
         BitSet32 fprs_in_use = fpr.GetCallerSavedUsed();
-        regs_in_use[DecodeReg(ARM64Reg::W30)] = 0;
+        regs_in_use[DecodeReg(ARM64Reg::W30)] = false;
 
         ABI_PushRegisters(regs_in_use);
         m_float_emit.ABI_PushRegisters(fprs_in_use, ARM64Reg::X30);

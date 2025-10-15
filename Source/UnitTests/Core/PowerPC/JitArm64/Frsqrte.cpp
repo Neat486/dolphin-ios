@@ -27,7 +27,7 @@ class TestFrsqrte : public JitArm64
 public:
   explicit TestFrsqrte(Core::System& system) : JitArm64(system)
   {
-    const Common::ScopedJITPageWriteAndNoExecute enable_jit_page_writes(GetRegionPtr());
+    const Common::ScopedJITPageWriteAndNoExecute enable_jit_page_writes;
 
     AllocCodeSpace(4096);
 
@@ -57,7 +57,7 @@ TEST(JitArm64, Frsqrte)
   Core::DeclareAsCPUThread();
   Common::ScopeGuard cpu_thread_guard([] { Core::UndeclareAsCPUThread(); });
 
-  TestFrsqrte test(Core::System::GetInstance());
+  const TestFrsqrte test(Core::System::GetInstance());
 
   for (const u64 ivalue : double_test_values)
   {
