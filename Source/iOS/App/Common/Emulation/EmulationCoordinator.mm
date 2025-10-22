@@ -109,13 +109,11 @@
     
     if ([JitManager shared].acquiredJit)
     {
+      Common::SetJitType([JitManager shared].deviceHasTxm ? Common::JitType::LuckTXM : Common::JitType::Legacy);
+      
       Config::SetBase(Config::GFX_VERTEX_LOADER_TYPE, VertexLoaderType::Native);
       
       Common::AllocateExecutableMemoryRegion();
-      
-      if ([JitManager shared].deviceHasTxm) {
-        Common::PrepareExecutableMemoryRegionOnTxmDevice();
-      }
     }
     else
     {

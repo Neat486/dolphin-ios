@@ -238,7 +238,12 @@ elseif(WIN32)
 elseif(IOS)
   target_sources(common PRIVATE
     Logging/ConsoleListenerNix.cpp
+    JITMemoryTracker.h
+    JITMemoryTracker.cpp
     MemArenaDarwin.cpp
+    MemoryUtil_iOS_Legacy.cpp
+    MemoryUtil_iOS_LuckTXM.cpp
+    MemoryUtil_iOS.cpp
   )
 elseif(APPLE)
   target_sources(common PRIVATE
